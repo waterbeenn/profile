@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { profile } from "@/lib/data";
 import { GithubIcon, InstagramIcon, LinkedinIcon } from "../icons";
 
@@ -28,10 +29,24 @@ export default function MenuBar() {
 
   return (
     <header className="glass-dither flex items-center justify-between border-b border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 py-2.5 text-sm text-[var(--menu-foreground)] backdrop-blur-[4px] backdrop-saturate-150">
-      <p className="font-bold">{profile.name}</p>
+      <div className="flex items-center gap-1.5">
+        <Image
+          src="/main_duck.png"
+          alt=""
+          width={18}
+          height={18}
+          unoptimized
+          className="rounded-sm"
+        />
+        <p className="font-bold">{profile.name}</p>
+      </div>
       <div className="flex items-center gap-4 text-[var(--menu-foreground)]/70">
         <div className="hidden items-center gap-3 sm:flex">
-          <a href={`https://${profile.social.github}`} aria-label="GitHub" className="transition-opacity hover:opacity-60">
+          <a
+            href={`https://${profile.social.github}`}
+            aria-label="GitHub"
+            className="transition-opacity hover:opacity-60"
+          >
             <GithubIcon size={15} />
           </a>
           <a
@@ -41,7 +56,11 @@ export default function MenuBar() {
           >
             <InstagramIcon size={15} />
           </a>
-          <a href={`https://${profile.social.linkedin}`} aria-label="LinkedIn" className="transition-opacity hover:opacity-60">
+          <a
+            href={`https://${profile.social.linkedin}`}
+            aria-label="LinkedIn"
+            className="transition-opacity hover:opacity-60"
+          >
             <LinkedinIcon size={15} />
           </a>
         </div>
