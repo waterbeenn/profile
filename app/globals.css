@@ -1,26 +1,132 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf9f6;
+  --foreground: #17170f;
+  --muted: #706f64;
+  --border: #e6e3d8;
+  --accent: #3f6c51;
+  --accent-soft: #e6ede4;
+  --surface: #ffffff;
+  /* Both families are linked directly in app/layout.tsx rather than provided by
+     next/font — see the note there for why — so the variables are declared here. */
+  --font-sans: "Noto Sans KR";
+  --font-mono: "Geist Mono";
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-surface: var(--surface);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--background);
+}
+
+.font-mono-label {
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.14em;
+}
+
+.font-sekuya {
+  font-family: "Sekuya", var(--font-sans), sans-serif;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes window-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-window-in {
+  animation: window-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.desktop-noise {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch' result='noise'/><feColorMatrix in='noise' type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
+}
+
+/* The wallpaper is a tall vertical gradient, which quantizes into horizontal
+   bands in 8-bit color. Out on the desktop those bands are invisible because
+   .desktop-noise dithers them. Inside a glass panel, though, backdrop-filter
+   blurs that grain away (measured: 44 distinct values outside vs 3 inside),
+   so the raw banding shows through — and shifts on repaint, which reads as
+   flicker. This re-applies a fine grain ON TOP of the glass, where the
+   backdrop blur can't smooth it out, restoring the dithering. */
+.glass-dither {
+  position: relative;
+}
+
+.glass-dither::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='d'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch' result='noise'/><feColorMatrix in='noise' type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23d)'/></svg>");
+  background-repeat: repeat;
+  opacity: 0.13;
+}
+
+.glass-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent) 45%, transparent) transparent;
+}
+
+.glass-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.glass-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.glass-scrollbar::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 999px;
+}
+
+.glass-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+/* Form controls and links get a UA-stylesheet cursor (default/pointer) that
+   isn't "auto", so they don't pick up the custom cursor set on the desktop
+   root via inheritance. Force them back to inheriting it. */
+.desktop-cursor button,
+.desktop-cursor a,
+.desktop-cursor [role="button"] {
+  cursor: inherit;
 }
